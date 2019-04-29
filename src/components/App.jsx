@@ -2,35 +2,38 @@ import React from 'react';
 import Header from './Header';
 import TicketList from './TicketList';
 import NewTicketControl from './NewTicketControl';
-import { Switch, Route } from 'react-router-dom';
+import PropTypes from 'prop-types';
+import { Switch, Route, withRouter } from 'react-router-dom';
+import { connect } from 'react-redux';
 
 class App extends React.Component{
 
   constructor(props){
     super(props);
-    this.state = {
-      masterTicketList: []
-    };
-    this.handleAddingNewTicketToList = this.handleAddingNewTicketToList.bind(this);
-  }
-
-  handleAddingNewTicketToList(newTicket){
-    const newMasterTicketList = this.state.masterTicketList.slice();
-    newMasterTicketList.push(newTicket);
-    this.setState({masterTicketList: newMasterTicketList});
+    console.log(props);
   }
 
   render(){
     return (
       <div>
-      <Header/>
-      <Switch>
-        <Route exact path='/' render={()=><TicketList ticketList={this.state.masterTicketList} />} />
-        <Route path='/newticket' render={()=><NewTicketControl onNewTicketCreation={this.handleAddingNewTicketToList} />} />
-      </Switch>
+        <Header/>
+        <Switch>
+          <Route exact path='/' render={()=><TicketList ticketList={this.props.masterTicketList} />} />
+          <Route path='/newticket' component={NewTicketControl} />
+        </Switch>
       </div>
     );
   }
 }
 
-export default App;
+const mapStateToProps = state => {
+  return {
+    masterTicketList: state
+  };
+};
+
+App.propTypes = {
+  masterTicketList: PropTypes.object
+};
+
+export default withRouter(connect(mapStateToProps)(App));
